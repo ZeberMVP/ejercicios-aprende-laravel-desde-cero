@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +41,7 @@ Route::patch('/ejercicio1', function () {
     return "PATCH OK";
 });
 
-ROUTE::post('/ejercicio2/a', function (Request $request) {
+Route::post('/ejercicio2/a', function (Request $request) {
     return Response::json([
         'name' => $request->name,
         'description' => $request->description,
@@ -50,7 +49,7 @@ ROUTE::post('/ejercicio2/a', function (Request $request) {
     ], 200);
 });
 
-ROUTE::post('/ejercicio2/b', function (Request $request) {
+Route::post('/ejercicio2/b', function (Request $request) {
 
     if ($request->price < 0) {
         return Response::json([
@@ -65,7 +64,7 @@ ROUTE::post('/ejercicio2/b', function (Request $request) {
     ], 200);
 });
 
-ROUTE::post('/ejercicio2/c/{discount?}', function (Request $request) {
+Route::post('/ejercicio2/c/{discount?}', function (Request $request) {
 
     $discount = 0;
     if ($request->query('discount') == "SAVE5") {
@@ -82,4 +81,26 @@ ROUTE::post('/ejercicio2/c/{discount?}', function (Request $request) {
         'price' => $request->price - ($request->price * $discount / 100),
         'discount' => $discount,
     ], 200);
+});
+
+Route::post('/ejercicio3', function (Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:64',
+        'description' => 'required|string|max:512',
+        'price' => 'required|numeric|gt:0',
+        'has_battery' => 'required|boolean',
+        'battery_duration' => 'required_if:has_battery,true|numeric|gt:0',
+        'colors' => 'required|array',
+        'colors.*' => 'required|string',
+        'dimensions' => 'required|array',
+        'dimensions.width' => 'required|numeric|gt:0',
+        'dimensions.height' => 'required|numeric|gt:0',
+        'dimensions.length' => 'required|numeric|gt:0',
+        'accessories' => 'required|array',
+        'accessories.*' => 'required|array',
+        'accessories.*.name' => 'required|string',
+        'accessories.*.price' => 'required|numeric|gt:0',
+    ]);
+
+    return response();
 });
